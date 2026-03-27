@@ -1,22 +1,25 @@
-#include <stdio.h>
-#include <string.h>
+#include <stdio.h>   // Biblioteca para entrada e saída (printf, scanf)
+
 
 int main() {
 
-    int opcao;
+    int opcao; // Variável que guarda a opção escolhida no menu
 
-    // ===== DADOS =====
-    char nome[50];
-    char nascimento[20];
-    char sangue[10];
-    char alergias[100];
-    char endereco[100];
+    // ===== DADOS DO USUÁRIO =====
+    char nome[50];          // Nome completo
+    char nascimento[20];   // Data de nascimento
+    char sangue[10];       // Tipo sanguíneo
+    char alergias[100];    // Alergias
+    char endereco[100];    // Endereço
 
-    char nomeContato[50];
+    // ===== CONTATO DE EMERGÊNCIA =====
+    char nomeContato[50];     
     char telefoneContato[20];
 
+    // Loop principal (repete até o usuário escolher sair)
     do {
 
+        // ===== MENU DO SISTEMA =====
         printf("\n====================================================\n");
         printf("              VIVA SEGURA SYSTEM\n");
         printf("====================================================\n");
@@ -35,18 +38,23 @@ int main() {
         printf(" [0] Sair\n");
         printf("====================================================\n");
 
+        // Lê a opção digitada pelo usuário
         printf("Escolha uma opcao: ");
         scanf("%d", &opcao);
-        getchar();
+
+        getchar(); // Limpa o ENTER que ficou no buffer
 
         printf("\n----------------------------------------------------\n");
 
+        // ===== ESTRUTURA DE DECISÃO =====
+        // Executa um bloco de código dependendo da opção escolhida
         switch (opcao) {
 
+            // ===== CADASTRO =====
             case 1:
-                printf("            CADASTRO COMPLETO\n");
-                printf("----------------------------------------------------\n");
+                printf("CADASTRO COMPLETO\n");
 
+                // Coleta dados do usuário
                 printf("Nome completo: ");
                 scanf(" %[^\n]", nome);
 
@@ -62,6 +70,7 @@ int main() {
                 printf("Endereco: ");
                 scanf(" %[^\n]", endereco);
 
+                // Coleta contato de emergência
                 printf("\n--- CONTATO DE EMERGENCIA ---\n");
 
                 printf("Nome do contato: ");
@@ -71,157 +80,120 @@ int main() {
                 scanf("%s", telefoneContato);
 
                 printf("\nCadastro realizado com sucesso!\n");
-                break;
+                break; // Encerra o case
 
+            // ===== DENÚNCIA =====
             case 2:
+                // Simula registro de denúncia
                 printf("Denuncia registrada!\n");
                 printf("Sua identidade esta protegida.\n");
                 break;
 
+            // ===== EMERGÊNCIA =====
             case 3:
+                // Simula acionamento de emergência
                 printf("Palavra-chave acionada com sucesso!\n");
-                printf("EMERGENCIA ATIVADA!! \n\n");
+                printf("EMERGENCIA ATIVADA!!\n\n");
 
                 printf("Localizacao enviada para:\n");
                 printf("- Policia\n- Ambulancia\n- Contato de emergencia\n\n");
 
+                // Usa o nome cadastrado
                 printf("Mensagem enviada:\n");
                 printf("\"A mulher %s esta em perigo de vida.\n", nome);
                 printf("Favor ir imediatamente ao local indicado.\n");
                 printf("Situacao de alto risco.\"\n\n");
 
                 printf("Gravacao iniciada (enviada a cada 15s)\n");
-                printf("A gravação sera enviada para:\n");
-                printf("-Policia\n- Contato de emergencia\n\n");
 
                 printf("ORIENTACOES:\n");
                 printf("- Procure um local seguro\n");
-                printf("- Fique proxima de pessoas\n");
                 printf("- Evite confronto\n");
-                printf("- Aguarde ajuda\n\n");
-
-                printf("Quando estiver fora de perigo:\n");
-                printf("Voce pode parar a localizacao e a gravacao.\n\n");
-
-                printf("\n[1] Parar emergencia\n");
                 break;
 
+            // ===== MONITORAMENTO =====
             case 4:
-                printf("Palavra-chave acionada com sucesso!\n");
+                // Simula envio de localização em tempo real
                 printf("Sistema de monitoramento ativado\n\n");
 
                 printf("Localizacao sendo enviada em tempo real\n");
                 printf("Gravacao ativa\n\n");
 
                 printf("Mensagem enviada:\n");
-                printf("\"A mulher %s se sente insegura.\n", nome);
-                printf("Favor verificar a situacao no local informado.\"\n\n");
-
-                printf("Quando estiver fora de perigo:\n");
-                printf("Voce pode parar a localizacao e a gravacao.\n\n");
-
-                printf("\n[1] Parar monitoramento\n");
+                printf("\"A mulher %s se sente insegura.\"\n", nome);
                 break;
 
+            // ===== LIGAÇÃO DE SEGURANÇA =====
             case 5:
+                // Simula ligação para apoio
                 printf("LIGACAO DE SEGURANCA\n");
-                printf("----------------------------------------------------\n");
-
-                printf("Voce pode iniciar uma ligacao para se sentir segura\n");
-                printf("ate chegar em casa ou ao seu destino.\n\n");
 
                 printf("Escolha um contato para ligar:\n");
                 printf("[1] Atendimento de seguranca (24h)\n");
-                printf("[2] Central de apoio a mulher\n");
-                printf("[3] Contato de emergencia cadastrado\n\n");
-
-                printf("Durante a ligacao:\n");
-                printf("- Um atendente ficara conversando com voce\n");
-                printf("- Sua localizacao sera acompanhada\n");
-                printf("- Suporte ate voce chegar em seguranca\n");
+                printf("[2] Central de apoio\n");
+                printf("[3] Contato de emergencia\n");
                 break;
 
+            // ===== MAPA DE RISCO =====
             case 6:
+                // Mostra alertas do local
                 printf("MAPA DE RISCO\n");
-                printf("----------------------------------------------------\n");
 
-                printf("AREA DE RISCO DETECTADA!\n\n");
+                printf("AREA DE RISCO DETECTADA!\n");
 
-                printf("Ocorrencias registradas nesse local:\n");
                 printf("- Assaltos frequentes\n");
-                printf("- Casos de agressao\n");
-                printf("- Pouca iluminacao\n\n");
+                printf("- Pouca iluminacao\n");
 
-                printf("Favor escolher outra rota para sua seguranca.\n\n");
-
-                printf("Deseja que o app gere uma rota alternativa? (simulado)\n");
-                printf("Rota segura sendo preparada...\n");
+                printf("Sugestao: escolha outra rota\n");
                 break;
 
+            // ===== CHECK-IN =====
             case 7:
+                // Envia localização automaticamente
                 printf("CHECK-IN VIRTUAL\n");
-                printf("----------------------------------------------------\n");
 
-                printf("O sistema envia sua localizacao automaticamente\n");
-                printf("a cada 30 minutos para seus contatos.\n\n");
-
-                printf("Configuracoes:\n");
-                printf("- Voce pode ativar ou desativar quando quiser\n");
-                printf("- Pode definir o tempo de envio (ex: 10, 20, 30 min)\n\n");
-
-                printf("Status atual: ATIVO\n");
+                printf("Localizacao enviada automaticamente\n");
+                printf("Status: ATIVO\n");
                 break;
 
+            // ===== MEDIDA PROTETIVA =====
             case 8:
-                printf("MONITORAMENTO DE MEDIDA PROTETIVA\n");
-                printf("----------------------------------------------------\n");
-
+                // Alerta de proximidade do agressor
                 printf("ALERTA: O agressor se aproximou!\n");
-                printf("Distancia aproximada: 20 metros\n\n");
 
-                printf("Localizacao enviada para a policia\n\n");
-
-                printf("ORIENTACOES:\n");
-                printf("- Saia imediatamente do local\n");
-                printf("- Procure um lugar com pessoas\n");
-                printf("- Se for noite, busque local iluminado\n");
-                printf("- Aguarde apoio policial\n");
+                printf("Localizacao enviada para a policia\n");
                 break;
 
+            // ===== APOIO PSICOLÓGICO =====
             case 9:
+                // Informações de apoio emocional
                 printf("APOIO PSICOLOGICO\n");
-                printf("----------------------------------------------------\n");
 
-                printf("Voce nao esta sozinha. Estamos aqui para te ajudar.\n\n");
-
-                printf("- Dra. Ana Souza: (81) 98888-1111\n");
-                printf("- Dra. Carla Mendes: (81) 97777-2222\n");
-                printf("- CVV: 188\n");
+                printf("Voce nao esta sozinha.\n");
+                printf("CVV: 188\n");
                 break;
 
+            // ===== APOIO JURÍDICO =====
             case 10:
+                // Informações legais
                 printf("APOIO JURIDICO\n");
-                printf("----------------------------------------------------\n");
 
-                printf("Direitos:\n");
-                printf("- Lei Maria da Penha\n");
-                printf("- Medidas protetivas\n\n");
-
-                printf("Defensoria Publica:\n");
-                printf("- (81) 1234-5678\n");
+                printf("Lei Maria da Penha\n");
+                printf("Medidas protetivas\n");
                 break;
 
+            // ===== SERVIÇOS =====
             case 11:
+                // Rede de apoio
                 printf("REDE DE APOIO\n");
-                printf("----------------------------------------------------\n");
 
-                printf("Casas Abrigo:\n");
-                printf("- Casa Segura\n");
-                printf("- Abrigo Esperanca\n");
+                printf("Casas abrigo disponiveis\n");
                 break;
 
+            // ===== TELEFONES =====
             case 12:
-                printf("TELEFONES IMPORTANTES\n\n");
+                // Telefones importantes
+                printf("TELEFONES IMPORTANTES\n");
 
                 printf("180 - Central da Mulher\n");
                 printf("190 - Policia\n");
@@ -229,20 +201,25 @@ int main() {
                 printf("193 - Bombeiros\n");
                 break;
 
+            // ===== SAIR =====
             case 0:
+                // Finaliza o programa
                 printf("Encerrando sistema...\n");
                 break;
 
+            // ===== ERRO =====
             default:
+                // Caso o usuário digite opção inválida
                 printf("Opcao invalida!\n");
         }
 
+        // Pausa antes de voltar ao menu
         if (opcao != 0) {
             printf("\nPressione ENTER para continuar...");
             getchar();
         }
 
-    } while (opcao != 0);
+    } while (opcao != 0); // Repete enquanto não for 0
 
-    return 0;
+    return 0; // Fim do programa
 }
