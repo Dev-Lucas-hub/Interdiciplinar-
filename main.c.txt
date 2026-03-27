@@ -80,7 +80,7 @@ int main() {
 
             case 3:
                 printf("Palavra-chave acionada com sucesso!\n");
-                printf("EMERGENCIA ATIVADA ??\n\n");
+                printf("EMERGENCIA ATIVADA!! \n\n");
 
                 printf("Localizacao enviada para:\n");
                 printf("- Policia\n- Ambulancia\n- Contato de emergencia\n\n");
