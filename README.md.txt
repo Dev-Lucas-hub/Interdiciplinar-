@@ -77,7 +77,6 @@ Disponibiliza números importantes:
 
 - Linguagem C
 - Biblioteca `stdio.h`
-- Biblioteca `string.h`
 - Execução em terminal (CLI)
 
 ---
