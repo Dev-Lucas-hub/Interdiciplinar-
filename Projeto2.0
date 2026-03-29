@@ -1,0 +1,246 @@
+#include <stdio.h>
+#include <string.h>
+
+// ===== ESTRUTURA =====
+struct Usuario {
+    char nome[50];
+    char nascimento[20];
+    char cpf[20];
+    char rg[20];
+    char telefone[20];
+    char endereco[100];
+    char sangue[5];
+    char alergias[100];
+
+    char nomeContato[50];
+    char telefoneContato[20];
+
+    int temMedida;
+    char nomeAgressor[50];
+    char tornozeleira[20];
+    int distanciaSegura;
+};
+
+struct Usuario user;
+int cadastrado = 0;
+
+// PERMISSOES
+int localizacaoAtiva = 0;
+int microfoneAtivo = 0;
+int dispositivoAtivo = 0;
+
+// ===== PERMISSOES (AO ABRIR O APP) =====
+void permissoes() {
+    printf("\n=== PERMISSOES DO APP ===\n");
+
+    printf("Permitir acesso a localizacao? (1-Sim / 0-Nao): ");
+    scanf("%d", &localizacaoAtiva);
+
+    printf("Permitir acesso ao microfone (comando de voz)? (1-Sim / 0-Nao): ");
+    scanf("%d", &microfoneAtivo);
+
+    printf("Permitir acesso a botoes/dispositivo? (1-Sim / 0-Nao): ");
+    scanf("%d", &dispositivoAtivo);
+
+    printf("\nPermissoes configuradas!\n");
+}
+
+// ===== CADASTRO =====
+void cadastro() {
+    printf("\n========== CADASTRO ==========\n");
+
+    printf("Nome completo: ");
+    scanf(" %[^\n]", user.nome);
+
+    printf("Data de nascimento: ");
+    scanf(" %[^\n]", user.nascimento);
+
+    printf("CPF: ");
+    scanf("%s", user.cpf);
+
+    printf("RG: ");
+    scanf("%s", user.rg);
+
+    printf("Telefone: ");
+    scanf("%s", user.telefone);
+
+    printf("Endereco: ");
+    scanf(" %[^\n]", user.endereco);
+
+    printf("Tipo sanguineo (se nao souber digite '-'): ");
+    scanf("%s", user.sangue);
+
+    printf("Alergias (se nao tiver digite '-'): ");
+    scanf(" %[^\n]", user.alergias);
+
+    printf("\n--- CONTATO DE EMERGENCIA ---\n");
+
+    printf("Nome: ");
+    scanf(" %[^\n]", user.nomeContato);
+
+    printf("Telefone: ");
+    scanf("%s", user.telefoneContato);
+
+    printf("\nPossui medida protetiva? (1-Sim / 0-Nao): ");
+    scanf("%d", &user.temMedida);
+
+    if (user.temMedida == 1) {
+        printf("Nome do agressor: ");
+        scanf(" %[^\n]", user.nomeAgressor);
+
+        printf("Codigo da tornozeleira: ");
+        scanf("%s", user.tornozeleira);
+
+        printf("Distancia segura (metros): ");
+        scanf("%d", &user.distanciaSegura);
+    }
+
+    cadastrado = 1;
+
+    printf("\nCadastro realizado com sucesso!\n");
+
+    if (strcmp(user.sangue, "-") == 0) {
+        printf("Aviso: Atualize seu tipo sanguineo depois.\n");
+    }
+
+    if (strcmp(user.alergias, "-") == 0) {
+        printf("Aviso: Nenhuma alergia informada.\n");
+    }
+}
+
+// ===== EMERGENCIA =====
+void emergencia() {
+    if (!cadastrado) {
+        printf("Cadastre-se primeiro!\n");
+        return;
+    }
+
+    printf("\n🚨 EMERGENCIA AUTOMATICA 🚨\n");
+
+    if (localizacaoAtiva == 0) {
+        printf("Localizacao desativada! Ative para melhor funcionamento.\n");
+    }
+
+    printf("Ativacao por botao ou voz\n");
+    printf("Dispositivo vibrando...\n");
+
+    printf("\nLocalizacao enviada\n");
+    printf("Cameras direcionadas para o local\n");
+
+    printf("\nEnviado para:\n");
+    printf("- Policia\n- Ambulancia\n");
+    printf("- %s (%s)\n", user.nomeContato, user.telefoneContato);
+}
+
+// ===== MONITORAMENTO =====
+void monitoramento() {
+    if (!cadastrado) {
+        printf("Cadastre-se primeiro!\n");
+        return;
+    }
+
+    printf("\n📡 MONITORAMENTO 📡\n");
+
+    printf("Localizacao sendo enviada\n");
+    printf("Cameras ajustadas\n");
+}
+
+// ===== MEDIDA PROTETIVA =====
+void medidaProtetiva() {
+    if (!cadastrado || user.temMedida == 0) {
+        printf("Sem medida protetiva cadastrada.\n");
+        return;
+    }
+
+    int distanciaAtual;
+
+    printf("\nDistancia do agressor (simulacao): ");
+    scanf("%d", &distanciaAtual);
+
+    if (distanciaAtual <= user.distanciaSegura) {
+        printf("\n🚨 ALERTA 🚨\n");
+        printf("Agressor ultrapassou limite\n");
+        printf("Policia acionada automaticamente\n");
+    } else {
+        printf("Situacao segura\n");
+    }
+}
+
+// ===== DENUNCIA =====
+void denuncia() {
+    char texto[300];
+
+    printf("\nDescreva o ocorrido:\n");
+    scanf(" %[^\n]", texto);
+
+    printf("\nDenuncia enviada!\n");
+}
+
+// ===== MAPA DE RISCO =====
+void mapaRisco() {
+
+    if (!cadastrado) {
+        printf("Cadastre-se primeiro!\n");
+        return;
+    }
+
+    if (localizacaoAtiva == 0) {
+        printf("Ative a localizacao!\n");
+        return;
+    }
+
+    int escolha;
+
+    printf("\nArea de risco detectada\n");
+
+    printf("Deseja rota segura? (1-Sim / 0-Nao): ");
+    scanf("%d", &escolha);
+
+    if (escolha == 1) {
+        printf("Abrindo app de mapa (ex: Waze)\n");
+        printf("Rota para: %s\n", user.endereco);
+    }
+}
+
+// ===== MENU =====
+void menu() {
+    printf("\n================================\n");
+    printf("      VIVA SEGURA SYSTEM\n");
+    printf("================================\n");
+    printf("1 - Cadastro\n");
+    printf("2 - Emergencia (simulacao)\n");
+    printf("3 - Monitoramento (simulacao)\n");
+    printf("4 - Medida protetiva\n");
+    printf("5 - Denuncia\n");
+    printf("6 - Mapa de risco\n");
+    printf("7 - Telefones\n");
+    printf("0 - Sair\n");
+    printf("================================\n");
+    printf("Escolha: ");
+}
+
+// ===== MAIN =====
+int main() {
+
+    int op;
+
+    // PERMISSOES AO ABRIR O APP
+    permissoes();
+
+    do {
+        menu();
+        scanf("%d", &op);
+
+        switch(op) {
+            case 1: cadastro(); break;
+            case 2: emergencia(); break;
+            case 3: monitoramento(); break;
+            case 4: medidaProtetiva(); break;
+            case 5: denuncia(); break;
+            case 6: mapaRisco(); break;
+        }
+
+    } while(op != 0);
+
+    return 0;
+}
