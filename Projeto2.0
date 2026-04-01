@@ -1,231 +1,434 @@
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 
-// ===== ESTRUTURA =====
+// ===== STRUCT =====
 struct Usuario {
     char nome[50];
     char nascimento[20];
     char cpf[20];
-    char rg[20];
+
+    char email[50];
+    char senha[20];
     char telefone[20];
+
     char endereco[100];
+    char cidade[50];
+
     char sangue[5];
     char alergias[100];
 
-    char nomeContato[50];
-    char telefoneContato[20];
+    char contatoNome1[50];
+    char contatoTelefone1[20];
 
-    int temMedida;
-    char nomeAgressor[50];
-    char tornozeleira[20];
-    int distanciaSegura;
+    char contatoNome2[50];
+    char contatoTelefone2[20];
+
+    int contatoCheckin;
+    int intervaloCheckin;
+    char mensagemCheckin[100];
+
+    int protecaoCheckin;
+    char senhaCheckin[20];
 };
 
 struct Usuario user;
+
+int logado = 0;
 int cadastrado = 0;
 
-// PERMISSOES
-int localizacaoAtiva = 0;
-int microfoneAtivo = 0;
-int dispositivoAtivo = 0;
-
-// ===== PERMISSOES (AO ABRIR O APP) =====
-void permissoes() {
-    printf("\n=== PERMISSOES DO APP ===\n");
-
-    printf("Permitir acesso a localizacao? (1-Sim / 0-Nao): ");
-    scanf("%d", &localizacaoAtiva);
-
-    printf("Permitir acesso ao microfone (comando de voz)? (1-Sim / 0-Nao): ");
-    scanf("%d", &microfoneAtivo);
-
-    printf("Permitir acesso a botoes/dispositivo? (1-Sim / 0-Nao): ");
-    scanf("%d", &dispositivoAtivo);
-
-    printf("\nPermissoes configuradas!\n");
+// ===== EMAIL =====
+int validarEmail(char email[]) {
+    return strchr(email, '@') != NULL;
 }
 
 // ===== CADASTRO =====
 void cadastro() {
-    printf("\n========== CADASTRO ==========\n");
+    char confirmarSenha[20];
 
-    printf("Nome completo: ");
+    system("cls");
+
+    printf("========================================\n");
+    printf("        CADASTRO DE USUARIO\n");
+    printf("========================================\n");
+
+    printf("\n--- DADOS PESSOAIS ---\n");
+
+    printf("Nome: ");
     scanf(" %[^\n]", user.nome);
 
-    printf("Data de nascimento: ");
+    printf("Nascimento: ");
     scanf(" %[^\n]", user.nascimento);
 
     printf("CPF: ");
     scanf("%s", user.cpf);
 
-    printf("RG: ");
-    scanf("%s", user.rg);
+    printf("\n--- CONTA ---\n");
+
+    do {
+        printf("Email: ");
+        scanf("%s", user.email);
+
+        if (!validarEmail(user.email))
+            printf("Email invalido!\n");
+
+    } while (!validarEmail(user.email));
+
+    printf("Senha: ");
+    scanf("%s", user.senha);
+
+    printf("Confirmar senha: ");
+    scanf("%s", confirmarSenha);
+
+    if (strcmp(user.senha, confirmarSenha) != 0) {
+        printf("\nErro: senhas nao coincidem!\n\n");
+        system("pause");
+        return;
+    }
 
     printf("Telefone: ");
     scanf("%s", user.telefone);
 
+    printf("\n--- ENDERECO ---\n");
+
     printf("Endereco: ");
     scanf(" %[^\n]", user.endereco);
 
-    printf("Tipo sanguineo (se nao souber digite '-'): ");
+    printf("Cidade: ");
+    scanf(" %[^\n]", user.cidade);
+
+    printf("\n--- SAUDE ---\n");
+
+    printf("Tipo sanguineo: ");
     scanf("%s", user.sangue);
 
-    printf("Alergias (se nao tiver digite '-'): ");
+    printf("Alergias: ");
     scanf(" %[^\n]", user.alergias);
 
-    printf("\n--- CONTATO DE EMERGENCIA ---\n");
+    printf("\n--- CONTATOS DE EMERGENCIA ---\n");
 
-    printf("Nome: ");
-    scanf(" %[^\n]", user.nomeContato);
+    printf("Nome do Contato 1: ");
+    scanf(" %[^\n]", user.contatoNome1);
 
     printf("Telefone: ");
-    scanf("%s", user.telefoneContato);
+    scanf("%s\n", user.contatoTelefone1);
 
-    printf("\nPossui medida protetiva? (1-Sim / 0-Nao): ");
-    scanf("%d", &user.temMedida);
+    printf("Nome do Contato 2: ");
+    scanf(" %[^\n]", user.contatoNome2);
 
-    if (user.temMedida == 1) {
-        printf("Nome do agressor: ");
-        scanf(" %[^\n]", user.nomeAgressor);
+    printf("Telefone: ");
+    scanf("%s", user.contatoTelefone2);
 
-        printf("Codigo da tornozeleira: ");
-        scanf("%s", user.tornozeleira);
+    printf("\n--- CONFIGURACAO DE SEGURANCA ---\n");
+    printf("Proteger check-in com senha?\n1 - Sim\n0 - Nao\n");
+    scanf("%d", &user.protecaoCheckin);
 
-        printf("Distancia segura (metros): ");
-        scanf("%d", &user.distanciaSegura);
+    if (user.protecaoCheckin == 1) {
+        printf("Crie uma senha: ");
+        scanf("%s", user.senhaCheckin);
     }
 
+    printf("\nCadastro realizado com sucesso!\n\n");
     cadastrado = 1;
 
-    printf("\nCadastro realizado com sucesso!\n");
+    system("pause");
+}
 
-    if (strcmp(user.sangue, "-") == 0) {
-        printf("Aviso: Atualize seu tipo sanguineo depois.\n");
+// ===== LOGIN =====
+void login() {
+    if (!cadastrado) {
+        printf("\nNenhum usuario cadastrado!\n\n");
+        system("pause");
+        return;
     }
 
-    if (strcmp(user.alergias, "-") == 0) {
-        printf("Aviso: Nenhuma alergia informada.\n");
+    char email[50], senha[20];
+
+    printf("\n===== LOGIN =====\n");
+
+    printf("Email: ");
+    scanf("%s", email);
+
+    printf("Senha: ");
+    scanf("%s", senha);
+
+    if (strcmp(email, user.email) == 0 && strcmp(senha, user.senha) == 0) {
+        logado = 1;
+        printf("\nLogin realizado com sucesso!\n\n");
+    } else {
+        printf("\nErro: email ou senha incorretos!\n\n");
     }
+
+    system("pause");
+}
+
+// ===== VER DADOS =====
+void verDados() {
+    if (!logado) {
+        printf("\nFaca login primeiro!\n\n");
+        system("pause");
+        return;
+    }
+
+    printf("\n========== DADOS DO USUARIO ==========\n");
+    printf("Nome: %s\n", user.nome);
+    printf("Nascimento: %s\n", user.nascimento);
+    printf("CPF: %s\n", user.cpf);
+    printf("Email: %s\n", user.email);
+    printf("Telefone: %s\n", user.telefone);
+    printf("Endereco: %s\n", user.endereco);
+    printf("Cidade: %s\n", user.cidade);
+    printf("Tipo sanguineo: %s\n", user.sangue);
+    printf("Alergias: %s\n", user.alergias);
+
+    printf("\nContatos:\n");
+    printf("- %s (%s)\n", user.contatoNome1, user.contatoTelefone1);
+    printf("- %s (%s)\n", user.contatoNome2, user.contatoTelefone2);
+
+    system("pause");
 }
 
 // ===== EMERGENCIA =====
 void emergencia() {
-    if (!cadastrado) {
-        printf("Cadastre-se primeiro!\n");
+    if (!logado) {
+        printf("\nFaca login primeiro!\n\n");
+        system("pause");
         return;
     }
 
-    printf("\n🚨 EMERGENCIA AUTOMATICA 🚨\n");
+    system("cls");
 
-    if (localizacaoAtiva == 0) {
-        printf("Localizacao desativada! Ative para melhor funcionamento.\n");
-    }
+    printf("========================================\n");
+    printf("        EMERGENCIA ACIONADA\n");
+    printf("========================================\n");
 
-    printf("Ativacao por botao ou voz\n");
-    printf("Dispositivo vibrando...\n");
+   // ===== POLICIA =====
+    printf("\n--- POLICIA [190] ---\n");
+    printf("URGENTE: A mulher %s corre risco de vida!\n", user.nome);
+    printf("Favor se dirigir imediatamente para a localizacao enviada.\n");
 
-    printf("\nLocalizacao enviada\n");
-    printf("Cameras direcionadas para o local\n");
+    // ===== CONTATOS =====
+    printf("\n--- CONTATOS DE EMERGENCIA ---\n");
+    printf("%s pode estar em perigo de vida!\n", user.nome);
+    printf("Acompanhe a localizacao e tente contato imediato.\n");
 
-    printf("\nEnviado para:\n");
-    printf("- Policia\n- Ambulancia\n");
-    printf("- %s (%s)\n", user.nomeContato, user.telefoneContato);
+    printf("\nContatos notificados:\n");
+    printf("- %s (%s)\n", user.contatoNome1, user.contatoTelefone1);
+    printf("- %s (%s)\n", user.contatoNome2, user.contatoTelefone2);
+
+    printf("\nLocalizacao enviada para a policia [190] e contatos de emergencia.\n");
+    printf("Ajuda a caminho!\n\n");
+
+    system("pause");
 }
 
 // ===== MONITORAMENTO =====
 void monitoramento() {
-    if (!cadastrado) {
-        printf("Cadastre-se primeiro!\n");
+    if (!logado) {
+        printf("\nFaca login primeiro!\n\n");
+        system("pause");
         return;
     }
 
-    printf("\n📡 MONITORAMENTO 📡\n");
+     printf("========================================\n");
+    printf("        MONITORAMENTO ATIVO\n");
+    printf("========================================\n");
 
-    printf("Localizacao sendo enviada\n");
-    printf("Cameras ajustadas\n");
+    printf("\nSistema vibrando...\n");
+    printf("Enviando localizacao em tempo real...\n");
+
+    // ===== POLICIA =====
+    printf("\n--- POLICIA [190] ---\n");
+    printf("Atencao: A mulher %s se sente insegura neste local.\n", user.nome);
+    printf("Favor realizar patrulhamento e verificar a situacao.\n");
+
+    // ===== CONTATOS =====
+    printf("\n--- CONTATOS DE EMERGENCIA ---\n");
+    printf("%s nao se sente bem neste local.\n", user.nome);
+    printf("Por favor, entre em contato ou va ate a localizacao enviada.\n");
+
+    printf("\nContatos notificados:\n");
+    printf("- %s (%s)\n", user.contatoNome1, user.contatoTelefone1);
+    printf("- %s (%s)\n", user.contatoNome2, user.contatoTelefone2);
+
+    printf("\nLocalizacao enviada para a policia [190] e contatos de emergencia.\n\n");
+    system("pause");
 }
 
-// ===== MEDIDA PROTETIVA =====
-void medidaProtetiva() {
-    if (!cadastrado || user.temMedida == 0) {
-        printf("Sem medida protetiva cadastrada.\n");
+// ===== CHECK-IN =====
+void checkin() {
+    if (!logado) {
+        printf("\nFaca login primeiro!\n\n");
+        system("pause");
         return;
     }
 
-    int distanciaAtual;
+    int op;
 
-    printf("\nDistancia do agressor (simulacao): ");
-    scanf("%d", &distanciaAtual);
+    printf("========================================\n");
+    printf("             CHECK-IN\n");
+    printf("========================================\n");
 
-    if (distanciaAtual <= user.distanciaSegura) {
-        printf("\n🚨 ALERTA 🚨\n");
-        printf("Agressor ultrapassou limite\n");
-        printf("Policia acionada automaticamente\n");
-    } else {
-        printf("Situacao segura\n");
+    printf("\n1 - Ativar\n");
+    printf("2 - Desativar\n");
+    printf("3 - Configurar\n");
+    printf("4 - Status\n");
+
+    printf("\nEscolha: ");
+    scanf("%d", &op);
+
+    switch(op) {
+
+        // ===== ATIVAR =====
+        case 1:
+            printf("\nCheck-in ativado!\n");
+            printf("A localizacao sera enviada automaticamente.\n");
+            break;
+
+        // ===== DESATIVAR =====
+        case 2:
+            if (user.protecaoCheckin == 1) {
+                char senha[20];
+                printf("\nDigite a senha: ");
+                scanf("%s", senha);
+
+                if (strcmp(senha, user.senhaCheckin) == 0)
+                    printf("\nCheck-in desativado com sucesso!\n");
+                else
+                    printf("\nSenha incorreta! Nao foi possivel desativar.\n");
+            } else {
+                printf("\nCheck-in desativado!\n");
+            }
+            break;
+
+        // ===== CONFIGURAR =====
+        case 3:
+            printf("\n===== CONFIGURACAO =====\n");
+
+            printf("Escolha o contato (1 ou 2): ");
+            scanf("%d", &user.contatoCheckin);
+
+            printf("Intervalo de envio (em minutos): ");
+            scanf("%d", &user.intervaloCheckin);
+
+            printf("Mensagem que sera enviada:\n");
+            scanf(" %[^\n]", user.mensagemCheckin);
+
+            printf("\nConfiguracao salva com sucesso!\n");
+            break;
+
+        // ===== STATUS =====
+        case 4:
+            printf("\n===== STATUS DO CHECK-IN =====\n");
+
+            printf("Contato selecionado: %d\n", user.contatoCheckin);
+            printf("Intervalo: %d minutos\n", user.intervaloCheckin);
+            printf("Mensagem: %s\n", user.mensagemCheckin);
+
+            if (user.protecaoCheckin == 1)
+                printf("Protecao: Ativada\n");
+            else
+                printf("Protecao: Desativada\n");
+            break;
+
+        // ===== INVALIDO =====
+        default:
+            printf("\nOpcao invalida!\n");
     }
+    system("pause");
 }
 
 // ===== DENUNCIA =====
 void denuncia() {
-    char texto[300];
+  //  if (!logado) {
+   //     printf("\nFaca login primeiro!\n\n");
+   //     system("pause");
+   //     return;
+   // }
+   int anonimo;
+   char texto[200];
+    
+    system("cls");
+     
+    printf("========================================\n");
+    printf("            DENUNCIA\n");
+    printf("========================================\n");
 
-    printf("\nDescreva o ocorrido:\n");
+    printf("\nDescreva a situacao:\n");
     scanf(" %[^\n]", texto);
 
-    printf("\nDenuncia enviada!\n");
+    printf("\nDeseja enviar anonimamente?\n");
+    printf("1 - Sim\n");
+    printf("0 - Nao\n");
+    printf("Escolha: ");
+    scanf("%d", &anonimo);
+
+    printf("\nEnviando denuncia...\n\n");
+    system("pause");
+
+    system("cls");
+     
+    printf("\n========================================\n");
+    printf("        CONFIRMACAO DA DENUNCIA\n");
+    printf("========================================\n");
+
+    if (anonimo == 1) {
+        printf("Tipo: Anonima\n");
+        printf("Sua identidade foi protegida.\n");
+    } else {
+        printf("Tipo: Identificada\n");
+        printf("Responsavel: %s\n", user.nome);
+    }
+
+    printf("\n--- DESCRICAO DA DENUNCIA ---\n");
+    printf("%s\n", texto);
+
+    printf("\nSua denuncia foi enviada com sucesso!\n\n");
+    printf("As autoridades competentes foram notificadas.\n\n");
+
+    strcpy(texto, "");
+    
+    system("pause");
 }
 
-// ===== MAPA DE RISCO =====
-void mapaRisco() {
+// ===== TELEFONES =====
+void telefones() {
+    printf("\n========= TELEFONES IMPORTANTES ========\n\n");
+    
+    printf("190 - Policia\n");
+    printf("192 - SAMU\n");
+    printf("193 - Bombeiros\n");
+    printf("180 - Central da Mulher\n\n");
 
-    if (!cadastrado) {
-        printf("Cadastre-se primeiro!\n");
-        return;
-    }
-
-    if (localizacaoAtiva == 0) {
-        printf("Ative a localizacao!\n");
-        return;
-    }
-
-    int escolha;
-
-    printf("\nArea de risco detectada\n");
-
-    printf("Deseja rota segura? (1-Sim / 0-Nao): ");
-    scanf("%d", &escolha);
-
-    if (escolha == 1) {
-        printf("Abrindo app de mapa (ex: Waze)\n");
-        printf("Rota para: %s\n", user.endereco);
-    }
+    system("pause");
 }
 
 // ===== MENU =====
 void menu() {
-    printf("\n================================\n");
-    printf("      VIVA SEGURA SYSTEM\n");
-    printf("================================\n");
-    printf("1 - Cadastro\n");
-    printf("2 - Emergencia (simulacao)\n");
-    printf("3 - Monitoramento (simulacao)\n");
-    printf("4 - Medida protetiva\n");
-    printf("5 - Denuncia\n");
-    printf("6 - Mapa de risco\n");
-    printf("7 - Telefones\n");
-    printf("0 - Sair\n");
-    printf("================================\n");
+    system("cls");
+
+    printf("========================================\n");
+    printf("        SISTEMA VIVA SEGURA\n");
+    printf("========================================\n");
+
+    printf("\n[1] Cadastro\n");
+    printf("[2] Login\n");
+    printf("[3] Ver dados\n");
+    printf("[4] Emergencia\n");
+    printf("[5] Monitoramento\n");
+    printf("[6] Check-in\n");
+    printf("[7] Denuncia\n");
+    printf("[8] Telefones\n");
+
+    printf("\n[0] Sair\n");
+    printf("========================================\n");
+
     printf("Escolha: ");
 }
 
 // ===== MAIN =====
 int main() {
-
     int op;
-
-    // PERMISSOES AO ABRIR O APP
-    permissoes();
 
     do {
         menu();
@@ -233,12 +436,16 @@ int main() {
 
         switch(op) {
             case 1: cadastro(); break;
-            case 2: emergencia(); break;
-            case 3: monitoramento(); break;
-            case 4: medidaProtetiva(); break;
-            case 5: denuncia(); break;
-            case 6: mapaRisco(); break;
+            case 2: login(); break;
+            case 3: verDados(); break;
+            case 4: emergencia(); break;
+            case 5: monitoramento(); break;
+            case 6: checkin(); break;
+            case 7: denuncia(); break;
+            case 8: telefones(); break;
         }
+        
+      
 
     } while(op != 0);
 
