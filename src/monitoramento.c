@@ -33,4 +33,3 @@ void monitoramento(void) {
     printf("\nLocalizacao enviada para a policia [190] e contatos de emergencia.\n\n");
     console_pause();
 }
-

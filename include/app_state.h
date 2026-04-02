@@ -5,4 +5,3 @@
 extern Usuario user;
 extern int logado;
 extern int cadastrado;
-

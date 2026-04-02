@@ -4,6 +4,7 @@
 #include "../include/app_state.h"
 #include "../include/auth.h"
 #include "../include/console.h"
+#include "../include/storage.h"
 
 int validarEmail(char email[]) {
     return strchr(email, '@') != NULL;
@@ -52,6 +53,12 @@ void cadastro(void) {
         return;
     }
 
+    if (storage_email_exists(user.email)) {
+        printf("\nErro: ja existe cadastro com este email!\n\n");
+        console_pause();
+        return;
+    }
+
     printf("Telefone: ");
     scanf("%s", user.telefone);
 
@@ -92,6 +99,18 @@ void cadastro(void) {
     if (user.protecaoCheckin == 1) {
         printf("Crie uma senha: ");
         scanf("%s", user.senhaCheckin);
+    } else {
+        user.senhaCheckin[0] = '\0';
+    }
+
+    user.intervaloCheckin = 0;
+    user.contatoCheckin = 0;
+    user.mensagemCheckin[0] = '\0';
+
+    if (!storage_insert_usuario(&user)) {
+        printf("\nErro: nao foi possivel salvar o cadastro (pasta data/). \n\n");
+        console_pause();
+        return;
     }
 
     printf("\nCadastro realizado com sucesso!\n\n");
@@ -117,7 +136,10 @@ void login(void) {
     printf("Senha: ");
     scanf("%s", senha);
 
-    if (strcmp(email, user.email) == 0 && strcmp(senha, user.senha) == 0) {
+    Usuario tmp;
+    if (storage_find_usuario_by_email(email, &tmp) &&
+        strcmp(senha, tmp.senha) == 0) {
+        user = tmp;
         logado = 1;
         printf("\nLogin realizado com sucesso!\n\n");
     } else {
@@ -126,4 +148,3 @@ void login(void) {
 
     console_pause();
 }
-

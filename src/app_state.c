@@ -4,4 +4,3 @@ Usuario user;
 
 int logado = 0;
 int cadastrado = 0;
-

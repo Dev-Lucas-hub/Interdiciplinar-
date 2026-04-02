@@ -4,6 +4,7 @@
 #include "../include/app_state.h"
 #include "../include/console.h"
 #include "../include/denuncia.h"
+#include "../include/storage.h"
 
 void denuncia(void) {
     int anonimo;
@@ -44,10 +45,11 @@ void denuncia(void) {
     printf("\n--- DESCRICAO DA DENUNCIA ---\n");
     printf("%s\n", texto);
 
+    storage_append_denuncia(anonimo ? 0 : user.id_usuario, texto);
+
     printf("\nSua denuncia foi enviada com sucesso!\n\n");
     printf("As autoridades competentes foram notificadas.\n\n");
 
     strcpy(texto, "");
     console_pause();
 }
-

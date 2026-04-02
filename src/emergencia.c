@@ -3,6 +3,7 @@
 #include "../include/app_state.h"
 #include "../include/console.h"
 #include "../include/emergencia.h"
+#include "../include/storage.h"
 
 void emergencia(void) {
     if (!logado) {
@@ -16,6 +17,12 @@ void emergencia(void) {
     printf("========================================\n");
     printf("        EMERGENCIA ACIONADA\n");
     printf("========================================\n");
+
+    char local[120];
+    printf("\nLocal aproximado (ou breve descricao): ");
+    scanf(" %[^\n]", local);
+
+    storage_append_emergencia(user.id_usuario, local);
 
     printf("\n--- POLICIA [190] ---\n");
     printf("URGENTE: A mulher %s corre risco de vida!\n", user.nome);
@@ -34,4 +41,3 @@ void emergencia(void) {
 
     console_pause();
 }
-

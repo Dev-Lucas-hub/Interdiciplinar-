@@ -24,4 +24,3 @@ void menu(void) {
 
     printf("Escolha: ");
 }
-

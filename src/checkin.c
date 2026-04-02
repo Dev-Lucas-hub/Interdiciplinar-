@@ -4,6 +4,7 @@
 #include "../include/app_state.h"
 #include "../include/checkin.h"
 #include "../include/console.h"
+#include "../include/storage.h"
 
 void checkin(void) {
     if (!logado) {
@@ -30,6 +31,8 @@ void checkin(void) {
         case 1:
             printf("\nCheck-in ativado!\n");
             printf("A localizacao sera enviada automaticamente.\n");
+            storage_append_checkin_virtual(user.id_usuario, "Check-in ativado",
+                                           "seguro");
             break;
 
         case 2:
@@ -38,12 +41,17 @@ void checkin(void) {
                 printf("\nDigite a senha: ");
                 scanf("%s", senha);
 
-                if (strcmp(senha, user.senhaCheckin) == 0)
+                if (strcmp(senha, user.senhaCheckin) == 0) {
                     printf("\nCheck-in desativado com sucesso!\n");
-                else
+                    storage_append_checkin_virtual(user.id_usuario,
+                                                   "Check-in desativado",
+                                                   "seguro");
+                } else
                     printf("\nSenha incorreta! Nao foi possivel desativar.\n");
             } else {
                 printf("\nCheck-in desativado!\n");
+                storage_append_checkin_virtual(user.id_usuario,
+                                               "Check-in desativado", "seguro");
             }
             break;
 
@@ -60,6 +68,8 @@ void checkin(void) {
             scanf(" %[^\n]", user.mensagemCheckin);
 
             printf("\nConfiguracao salva com sucesso!\n");
+            if (!storage_update_usuario(&user))
+                printf("(Aviso: nao foi possivel gravar no arquivo.)\n");
             break;
 
         case 4:
@@ -81,4 +91,3 @@ void checkin(void) {
 
     console_pause();
 }
-

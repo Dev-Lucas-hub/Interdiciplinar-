@@ -1,16 +1,21 @@
 #include <stdio.h>
 
+#include "../include/app_state.h"
 #include "../include/auth.h"
 #include "../include/checkin.h"
 #include "../include/denuncia.h"
 #include "../include/emergencia.h"
 #include "../include/menu.h"
 #include "../include/monitoramento.h"
+#include "../include/storage.h"
 #include "../include/telefones.h"
 #include "../include/ver_dados.h"
 
 int main(void) {
     int op;
+
+    storage_init();
+    if (storage_usuario_count() > 0) cadastrado = 1;
 
     do {
         menu();

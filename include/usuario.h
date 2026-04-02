@@ -1,6 +1,7 @@
 #pragma once
 
 typedef struct Usuario {
+    int id_usuario;
     char nome[50];
     char nascimento[20];
     char cpf[20];
@@ -28,4 +29,3 @@ typedef struct Usuario {
     int protecaoCheckin;
     char senhaCheckin[20];
 } Usuario;
-

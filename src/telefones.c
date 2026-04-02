@@ -13,4 +13,3 @@ void telefones(void) {
 
     console_pause();
 }
-

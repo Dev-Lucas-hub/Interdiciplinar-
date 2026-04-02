@@ -2,6 +2,7 @@
 
 #include "../include/app_state.h"
 #include "../include/console.h"
+#include "../include/storage.h"
 #include "../include/ver_dados.h"
 
 void verDados(void) {
@@ -11,22 +12,15 @@ void verDados(void) {
         return;
     }
 
-    printf("\n========== DADOS DO USUARIO ==========\n");
+    if (!storage_refresh_usuario_sessao(&user)) {
+        printf("\nNao foi possivel recarregar a sessao a partir do usuario.csv.\n\n");
+        console_pause();
+        return;
+    }
 
-    printf("Nome: %s\n", user.nome);
-    printf("Nascimento: %s\n", user.nascimento);
-    printf("CPF: %s\n", user.cpf);
-    printf("Email: %s\n", user.email);
-    printf("Telefone: %s\n", user.telefone);
-    printf("Endereco: %s\n", user.endereco);
-    printf("Cidade: %s\n", user.cidade);
-    printf("Tipo sanguineo: %s\n", user.sangue);
-    printf("Alergias: %s\n", user.alergias);
+    printf("\n========== TODOS OS USUARIOS ==========\n");
 
-    printf("\nContatos:\n");
-    printf("- %s (%s)\n", user.contatoNome1, user.contatoTelefone1);
-    printf("- %s (%s)\n", user.contatoNome2, user.contatoTelefone2);
+    storage_imprimir_todos_usuarios(user.id_usuario);
 
     console_pause();
 }
-
