@@ -1,0 +1,23 @@
+1.
+para compilar no Terminal/VScode, usar esse comando:
+
+gcc main.c funcoes.c db.c -o viva_segura -lsqlite3
+
+Observações (Windows):
+- Você precisa ter o SQLite instalado para o gcc encontrar o header `sqlite3.h` e a lib.
+- Se estiver usando MSYS2/MinGW, costuma funcionar com:
+  pacman -S mingw-w64-ucrt-x86_64-sqlite3
+- Se o seu gcc não achar o header/lib, você pode precisar adicionar:
+  -I<path_do_include> -L<path_da_lib>
+
+=====================================
+
+2.
+após compilar, rodar o executavel
+
+./viva_segura ( Linux/Mac )
+./viva_segura.exe ( windows )
+
+=====================================
+
+a cada alteração no código, será necessário rodar o comando de compilação novamente.
