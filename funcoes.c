@@ -94,7 +94,7 @@ void cadastro() {
     printf("Endereco: "); scanf(" %99[^\n]", user.endereco);
     printf("Cidade: "); scanf(" %49[^\n]", user.cidade);
     do {
-        printf("Estado (UF: "); scanf("%9s", user.estado);
+        printf("Estado (UF): "); scanf("%9s", user.estado);
         if (!validarUF(user.estado)) printf("[!] UF invalida. Ex: SP, RJ.\n");
     } while (!validarUF(user.estado));
     do {
@@ -112,7 +112,7 @@ void cadastro() {
         printf("Telefone 1: "); scanf("%19s", user.contatoTelefone1);
         if (!validarTelefone(user.contatoTelefone1)) printf("[!] Telefone invalido.\n");
     } while (!validarTelefone(user.contatoTelefone1));
-    printf("Nome do Contato 2: "); scanf(" %49[^\n]", user.contatoNome2);
+    printf("\nNome do Contato 2: "); scanf(" %49[^\n]", user.contatoNome2);
     do {
         printf("Telefone 2: "); scanf("%19s", user.contatoTelefone2);
         if (!validarTelefone(user.contatoTelefone2)) printf("[!] Telefone invalido.\n");
