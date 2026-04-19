@@ -78,13 +78,14 @@ void cadastro() {
         if (!validarEmail(user.email)) printf("[!] E-mail invalido.\n");
     } while (!validarEmail(user.email));
 
+    do{
     printf("Defina sua Senha: "); scanf("%19s", user.senha);
     printf("Confirme a Senha: "); scanf("%19s", confirmarSenha);
 
     if (strcmp(user.senha, confirmarSenha) != 0) {
-        printf("\n[Erro] As senhas nao coincidem!\n");
-        system("pause"); return; 
+        printf("\n[Erro] As senhas nao coincidem. Digite novamente!\n\n");
     }
+} while(strcmp(user.senha, confirmarSenha) != 0);
 
     printf("\n--- CONTATO E LOCALIZACAO ---\n");
     do {
@@ -263,7 +264,7 @@ void checkin() {
         printf(" [2] Desativar Check-in\n");
         printf(" [3] Ver Status Detalhado\n");
         printf(" [4] Configurar Intervalo\n");
-        printf(" [0] Voltar\n");
+        printf(" [0] Voltar ao menu\n");
         printf("------------------------------------------------\n");
         printf(" Escolha: ");
 
@@ -344,7 +345,7 @@ void checkin() {
                 break;
 
             case 0:
-                printf("\nSaindo do sistema de check-in...\n");
+                printf("\nRetornando ao menu inicial...\n");
                 break;
 
             default:
