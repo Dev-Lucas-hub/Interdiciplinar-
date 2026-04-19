@@ -16,7 +16,7 @@ struct Usuario {
     char contatoNome2[50]; char contatoTelefone2[20];
     int contatoCheckin; int intervaloCheckin;
     char mensagemCheckin[100]; int protecaoCheckin;
-    char senhaCheckin[20];
+    char senhaCheckin[20]; int intervaloMinutos;
 };
 
 extern struct Usuario user;
