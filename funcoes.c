@@ -305,7 +305,7 @@ void checkin() {
                         printf(" Seus contatos nao receberao mais alertas.\n");
                     } else {
                         printf("\n[ALERTA] Senha incorreta!\n");
-                        printf(" Possível tentativa suspeita! Alerta de seguranca emitido.\n");
+                        printf(" Possivel tentativa suspeita! Alerta de seguranca emitido.\n");
                     }
                 } else {
                     printf("\n[INFO] Check-in ja esta desativado.\n");
