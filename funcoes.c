@@ -250,61 +250,120 @@ void monitoramento() {
 void checkin() {
     if (!logado) { printf("\n[!] Realize o login primeiro.\n"); system("pause"); return; }
     
-    int op;
-    system("cls");
-    printf("================================================\n");
-    printf("                SISTEMA DE CHECK-IN             \n");
-    printf("================================================\n");
-    printf(" USUARIA: %s\n", user.nome);
-    printf("------------------------------------------------\n");
-    printf(" [1] Ativar Check-in\n");
-    printf(" [2] Desativar Check-in\n");
-    printf(" [3] Ver Status Atual\n");
-    printf(" [0] Voltar ao Menu\n");
-    printf("------------------------------------------------\n");
-    printf(" Escolha: ");
-    scanf("%d", &op);
+  int op;
 
-    switch(op) {
-        case 1:
-            printf("\n [OK] Check-in ativado. Notificaremos seus contatos.\n");
-            break;
-        
-        case 2:
-            if (user.protecaoCheckin == 1) {
-                char s[20];
-                printf("\n [!] SEGURANCA: Digite sua senha de Check-in: "); 
-                scanf("%19s", s);
-                if(strcmp(s, user.senhaCheckin) == 0) {
-                    printf(" [OK] Check-in desativado com sucesso.\n");
+    do {
+         system("cls");
+        printf("\n================================================\n");
+        printf("            SISTEMA DE CHECK-IN\n");
+        printf("================================================\n");
+        printf(" USUARIA: %s\n", user.nome);
+        printf("------------------------------------------------\n");
+        printf(" [1] Ativar Check-in\n");
+        printf(" [2] Desativar Check-in\n");
+        printf(" [3] Ver Status Detalhado\n");
+        printf(" [4] Configurar Intervalo\n");
+        printf(" [0] Voltar\n");
+        printf("------------------------------------------------\n");
+        printf(" Escolha: ");
+
+        if (scanf("%d", &op) != 1) {
+            printf("\n[Erro] Entrada invalida!\n");
+            while (getchar() != '\n');
+            continue;
+        }
+
+        switch(op) {
+
+            //  ATIVAR
+            case 1:
+                if (user.protecaoCheckin == 1) {
+                    printf("\n[INFO] Check-in ja esta ativo.\n");
                 } else {
-                    printf(" [!] Senha incorreta! Alerta de seguranca emitido.\n");
+                    user.protecaoCheckin = 1;
+
+                    printf("\n[OK] Check-in ativado com sucesso!\n");
+                    printf(" Seus contatos serao notificados.\n");
+                    printf(" Monitoramento iniciado em %s.\n", user.cidade);
+                    printf(" Intervalo de envio: %d minutos.\n", user.intervaloMinutos);
                 }
-            } else {
-                printf(" [OK] Check-in desativado.\n");
-            }
-            break;
+                break;
 
-        case 3:
-            printf("\n STATUS: Monitorando confirmacao em %s.\n", user.cidade);
-            printf(" Proxima verificacao em breve.\n");
-            break;
+            //  DESATIVAR
+            case 2:
+                if (user.protecaoCheckin == 1) {
+                    char senha[20];
 
-        case 0:
-            return;
+                    printf("\n[SEGURANCA] Digite sua senha: ");
+                    scanf("%19s", senha);
 
-        default:
-            printf("\n [!] Opcao invalida.\n");
-            break;
-    }
-    
-    {
-        int rc = db_log_checkin(&user, op);
+                    if (strcmp(senha, user.senhaCheckin) == 0) {
+                        user.protecaoCheckin = 0;
+
+                        printf("\n[OK] Check-in desativado.\n");
+                        printf(" Monitoramento encerrado.\n");
+                        printf(" Seus contatos nao receberao mais alertas.\n");
+                    } else {
+                        printf("\n[ALERTA] Senha incorreta!\n");
+                        printf(" Possível tentativa suspeita! Alerta de seguranca emitido.\n");
+                    }
+                } else {
+                    printf("\n[INFO] Check-in ja esta desativado.\n");
+                }
+                break;
+
+            //  STATUS
+            case 3:
+                printf("\n=========== STATUS DETALHADO ===========\n");
+                printf(" Usuaria: %s\n", user.nome);
+                printf(" Cidade atual: %s\n", user.cidade);
+                printf(" Check-in: %s\n", user.protecaoCheckin ? "ATIVO" : "INATIVO");
+                printf(" Intervalo: %d minutos\n", user.intervaloMinutos);
+
+                if (user.protecaoCheckin) {
+                    printf(" Proxima atualizacao em breve...\n");
+                    printf(" Sistema monitorando localizacao.\n");
+                } else {
+                    printf(" Sistema inativo.\n");
+                }
+                printf("========================================\n");
+                break;
+
+            //  CONFIGURAR INTERVALO
+            case 4:
+                printf("\nDigite o intervalo (em minutos): ");
+                int novo;
+
+                if (scanf("%d", &novo) != 1 || novo <= 0) {
+                    printf("[Erro] Valor invalido!\n");
+                    while (getchar() != '\n');
+                } else {
+                    user.intervaloMinutos = novo;
+                    printf("[OK] Intervalo atualizado para %d minutos.\n", novo);
+                }
+                break;
+
+            case 0:
+                printf("\nSaindo do sistema de check-in...\n");
+                break;
+
+            default:
+                printf("\n[Erro] Opcao invalida!\n");
+        }
+
+        // LOG
+
+       int rc = db_log_checkin(&user, op);
         if (rc != 0) {
             printf("\n[Erro] Falha ao registrar check-in no banco (codigo %d).\n", rc);
         }
-    }
-    system("pause");
+
+        printf("\nPressione ENTER para continuar...");
+        getchar();
+
+        system("pause");
+
+    } while(op != 0);
 }
 
 void denuncia() {
