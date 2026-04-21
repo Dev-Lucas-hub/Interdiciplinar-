@@ -27,7 +27,7 @@ int db_init(void) {
         "  id INTEGER PRIMARY KEY AUTOINCREMENT,"
         "  nome TEXT NOT NULL,"
         "  nascimento TEXT,"
-        "  cpf TEXT NOT NULL UNIQUE,"
+        "  cpf TEXT,"
         "  email TEXT NOT NULL UNIQUE,"
         "  senha TEXT NOT NULL,"
         "  telefone TEXT,"
