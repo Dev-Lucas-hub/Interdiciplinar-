@@ -1,5 +1,8 @@
 #include "viva_segura.h"
 #include "db.h"
+#include <sqlite3.h>
+
+extern sqlite3 *db;
 
 struct Usuario user;
 int logado = 0;
@@ -17,8 +20,58 @@ static int is_all_digits(const char *s) {
     return 1;
 }
 
-static int validarCPF(const char *cpf) {
-    return cpf && strlen(cpf) == 11 && is_all_digits(cpf);
+void limparNumero(char *entrada, char *saida) {
+    int j = 0;
+    for (int i = 0; entrada[i] != '\0'; i++) {
+        if (isdigit(entrada[i])) {
+            saida[j++] = entrada[i];
+        }
+    }
+    saida[j] = '\0';
+}
+
+
+int validarCPF(const char *cpf) {
+    return strlen(cpf) == 11;
+}
+
+void lerSenha(char *senha) {
+    int i = 0;
+    char ch;
+
+    while (1) {
+        ch = _getch(); // nao mostra na tela
+
+        if (ch == 13) { // ENTER
+            senha[i] = '\0';
+            break;
+
+        } else if (ch == 8) { // BACKSPACE
+            if (i > 0) {
+                i--;
+                printf("\b \b");
+            }
+
+        } else {
+            if (i < 19) {
+                senha[i++] = ch;
+                printf("*");
+            }
+        }
+    }
+}
+
+int senhaForte(const char *senha) {
+    int temNumero = 0, temLetra = 0;
+
+    if (strlen(senha) < 8) return 0;
+
+    for (int i = 0; senha[i]; i++) {
+        if (isdigit(senha[i])) temNumero = 1;
+        if (isalpha(senha[i])) temLetra = 1;
+    }
+
+    return temNumero && temLetra;
 }
 
 static int validarCEP(const char *cep) {
@@ -67,10 +120,40 @@ void cadastro() {
     printf("\n--- IDENTIFICACAO ---\n");
     printf("Nome Completo: "); scanf(" %49[^\n]", user.nome);
     printf("Data de Nascimento: "); scanf("%19s", user.nascimento);
-    do {
-        printf("CPF: "); scanf("%19s", user.cpf);
-        if (!validarCPF(user.cpf)) printf("[!] CPF invalido. Use apenas 11 numeros.\n");
-    } while (!validarCPF(user.cpf));
+    
+    char cpfDigitado[20];
+    char cpfLimpo[20];
+    int valido;
+
+do {
+    printf("Digite o CPF: ");
+    scanf("%s", cpfDigitado);
+
+    limparNumero(cpfDigitado, cpfLimpo);
+
+    // Verifica tamanho
+    if (strlen(cpfLimpo) != 11) {
+        printf("CPF deve conter exatamente 11 numeros!\n");
+        continue;
+    }
+
+    // Valida CPF real
+    if (!validarCPF(cpfLimpo)) {
+        printf("CPF invalido! Tente novamente.\n");
+        continue;
+    }
+
+    // Verifica se já existe no banco
+    if (cpfExiste(db, cpfLimpo)) {
+        printf("CPF ja cadastrado! Digite outro.\n");
+        continue;
+    }
+
+    valido = 1;
+
+} while (!valido);
+
+strcpy(user.cpf, cpfLimpo);
 
     printf("\n--- CREDENCIAIS ---\n");
     do {
@@ -78,14 +161,34 @@ void cadastro() {
         if (!validarEmail(user.email)) printf("[!] E-mail invalido.\n");
     } while (!validarEmail(user.email));
 
-    do{
-    printf("Defina sua Senha: "); scanf("%19s", user.senha);
-    printf("Confirme a Senha: "); scanf("%19s", confirmarSenha);
+    do {
+    printf("Defina sua Senha: ");
+    scanf("%19s", user.senha);
+
+    if (!senhaForte(user.senha)) {
+        printf("\n[Erro] A senha deve ter no minimo 8 caracteres, com letras e numeros.\n\n");
+        continue;
+    }
+
+    printf("Confirme a Senha: ");
+    scanf("%19s", confirmarSenha);
 
     if (strcmp(user.senha, confirmarSenha) != 0) {
         printf("\n[Erro] As senhas nao coincidem. Digite novamente!\n\n");
     }
-} while(strcmp(user.senha, confirmarSenha) != 0);
+
+} while (!senhaForte(user.senha) || strcmp(user.senha, confirmarSenha) != 0);
+
+int hash = 0;
+int i;
+
+// gera hash da senha
+for (i = 0; user.senha[i]; i++) {
+    hash += user.senha[i];
+}
+
+// sobrescreve a senha com o hash
+sprintf(user.senha, "%d", hash);
 
     printf("\n--- CONTATO E LOCALIZACAO ---\n");
     do {
@@ -130,15 +233,20 @@ void cadastro() {
     }
 
     {
-        int rc = db_insert_usuario(&user);
+    	int rc = db_insert_usuario(&user);
         if (rc == 0) {
-            printf("\n[Sucesso] Usuario cadastrado e salvo no banco!\n");
-            cadastrado = 1;
-        } else if (rc == 1) {
-            printf("\n[Erro] Ja existe uma usuaria cadastrada com este e-mail.\n");
-        } else {
-            printf("\n[Erro] Falha ao salvar no banco (codigo %d).\n", rc);
-        }
+          printf("\n[Sucesso] Usuario cadastrado e salvo no banco!\n");
+          cadastrado = 1;
+
+       } else if (rc == 1) {
+          printf("\n[Erro] Ja existe um usuario cadastrado com este e-mail.\n");
+          
+       } else if (rc == 2) {
+          printf("\n[Erro] Ja existe um usuario cadastrado com este CPF.\n");
+
+       } else {
+          printf("\n[Erro] Falha ao salvar no banco (codigo %d).\n", rc);
+       }
     }
     system("pause");
 }
@@ -149,24 +257,38 @@ void login() {
 
     printf("\n--- ACESSO AO SISTEMA ---\n");
     printf("E-mail: "); scanf("%49s", emailB);
-    printf("Senha: "); scanf("%19s", senhaB);
+    printf("Senha: "); lerSenha(senhaB); //  senha escondida
 
     {
         int rc = db_get_usuario_by_email(emailB, &temp);
         if (rc == 0) {
-            if (strcmp(senhaB, temp.senha) == 0) {
+
+            int hash = 0;
+            char hashStr[20];
+            int i;
+
+            // gera hash da senha digitada
+            for (i = 0; senhaB[i]; i++) {
+                hash += senhaB[i];
+            }
+
+            sprintf(hashStr, "%d", hash);
+
+            if (strcmp(hashStr, temp.senha) == 0) {
                 user = temp;
                 logado = 1;
                 printf("\n[OK] Login efetuado. Bem-vinda, %s!\n", user.nome);
             } else {
                 printf("\n[Erro] Senha incorreta.\n");
             }
+
         } else if (rc == 1) {
             printf("\n[Erro] Usuario nao encontrado.\n");
         } else {
             printf("\n[Erro] Falha ao consultar o banco (codigo %d).\n", rc);
         }
     }
+    
     system("pause");
 }
 
