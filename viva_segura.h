@@ -6,6 +6,8 @@
 #include <stdlib.h>
 #include <stddef.h>
 #include <ctype.h>
+#include <sqlite3.h>
+#include <conio.h>
 
 struct Usuario {
     char nome[50]; char nascimento[20]; char cpf[20];
@@ -22,6 +24,11 @@ struct Usuario {
 extern struct Usuario user;
 extern int logado;
 extern int cadastrado;
+
+void limparNumero(char *entrada, char *saida);
+int validarCPF(const char *cpf);
+
+int cpfExiste(sqlite3 *db, const char *cpf);
 
 int validarEmail(char email[]);
 void cadastro();

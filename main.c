@@ -1,5 +1,8 @@
 #include "viva_segura.h"
 #include "db.h"
+#include <sqlite3.h>
+
+sqlite3 *db;
 
 int main() {
     int op;
