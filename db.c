@@ -125,13 +125,32 @@ int db_insert_usuario(const struct Usuario *u) {
     sqlite3_bind_int (st, 17, u->protecaoCheckin);
     sqlite3_bind_text(st, 18, u->senhaCheckin, -1, SQLITE_TRANSIENT);
 
-    rc = sqlite3_step(st);
+rc = sqlite3_step(st);
+
+if (rc != SQLITE_DONE) {
+    const char *erro = sqlite3_errmsg(db); // ? agora funciona
+
+    if (strstr(erro, "cpf")) {
+        sqlite3_finalize(st);
+        sqlite3_close(db);
+        return 2; // CPF duplicado
+
+    } else if (strstr(erro, "email")) {
+        sqlite3_finalize(st);
+        sqlite3_close(db);
+        return 1; // Email duplicado
+
+    } else {
+        sqlite3_finalize(st);
+        sqlite3_close(db);
+        return 5; // Outro erro
+    }
+}
+
     sqlite3_finalize(st);
     sqlite3_close(db);
-
-    if (rc == SQLITE_DONE) return 0;
-    if (rc == SQLITE_CONSTRAINT || rc == SQLITE_CONSTRAINT_UNIQUE) return 1;
-    return rc;
+    
+    return 0;
 }
 
 static void safe_copy(char *dst, size_t dst_sz, const unsigned char *src) {
@@ -191,7 +210,7 @@ int db_get_usuario_by_email(const char *email, struct Usuario *out) {
 
     sqlite3_finalize(st);
     sqlite3_close(db);
-    if (rc == SQLITE_DONE) return 1; // não achou
+    if (rc == SQLITE_DONE) return 1; // nao achou
     return rc;
 }
 
@@ -314,4 +333,23 @@ int db_insert_denuncia(const struct Usuario *u_or_null, const char *relato, int 
     sqlite3_finalize(st);
     sqlite3_close(db);
     return (rc == SQLITE_DONE) ? 0 : rc;
+}
+
+//novo incremento validar cpf no banco, nao ocorrer duplicidade
+int cpfExiste(sqlite3 *db, const char *cpf) {
+    sqlite3_stmt *stmt;
+    int existe = 0;
+
+    const char *sql = "SELECT 1 FROM usuarios WHERE cpf = ? LIMIT 1;";
+
+    if (sqlite3_prepare_v2(db, sql, -1, &stmt, NULL) == SQLITE_OK) {
+        sqlite3_bind_text(stmt, 1, cpf, -1, SQLITE_STATIC);
+
+        if (sqlite3_step(stmt) == SQLITE_ROW) {
+            existe = 1;
+        }
+    }
+
+    sqlite3_finalize(stmt);
+    return existe;
 }
